@@ -296,14 +296,14 @@ const DashboardPage: React.FC = () => {
                                                 if (selectedSetType === 'superset') {
                                                     if (!primaryExercise) {
                                                         setPrimaryExercise(exercise)
-                                                        setSearchParams({ workoutId: activeWorkoutId!, muscle: selectedMuscle, setType: selectedSetType, primary_exercise: exercise._id })
+                                                        setSearchParams({ workoutId: activeWorkoutId!, muscle: selectedMuscle, setType: selectedSetType, primary_exercise: exercise.exerciseId })
                                                     } else if (!secondaryExercise && exercise._id !== primaryExercise._id) {
                                                         setSecondaryExercise(exercise)
-                                                        setSearchParams({ workoutId: activeWorkoutId!, muscle: selectedMuscle, setType: selectedSetType, primary_exercise: primaryExercise._id, secondary_exercise: exercise._id })
+                                                        navigate(`/sets?workoutId=${activeWorkoutId}&muscle=${selectedMuscle}&setType=${selectedSetType}&primary_exercise=${primaryExercise.exerciseId}&secondary_exercise=${exercise.exerciseId}`)
                                                     }
                                                 } else {
                                                     setPrimaryExercise(exercise)
-                                                    setSearchParams({ workoutId: activeWorkoutId!, muscle: selectedMuscle, setType: selectedSetType, primary_exercise: exercise._id })
+                                                    navigate(`/sets?workoutId=${activeWorkoutId}&muscle=${selectedMuscle}&setType=${selectedSetType}&primary_exercise=${exercise.exerciseId}`)
                                                 }
                                             }}
                                         >

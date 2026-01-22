@@ -49,9 +49,4 @@ const SetSchema = new Schema<Set>(
   }
 );
 
-SetSchema.index({ userId: 1, workoutId: 1, type: 1 }, { unique: true });
-SetSchema.index({ workoutId: 1 });
-SetSchema.index({ userId: 1 });
-SetSchema.index({ type: 1 });
-
 export default mongoose.model<Set>("Set", SetSchema);
