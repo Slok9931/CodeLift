@@ -3,6 +3,7 @@ import ExerciseService from '../services/exercise'
 import type { Exercise } from '../types'
 import Loading from './Loading'
 import { Filter } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 import { capitalize } from '../lib/utils'
 import Input from './ui/input'
@@ -10,6 +11,7 @@ import Dropdown from './ui/dropdown'
 import { Button } from './ui/button'
 
 const ExercisePage: React.FC = () => {
+    const navigate = useNavigate()
     const [exercises, setExercises] = useState<Exercise[]>([])
     const [loading, setLoading] = useState(true)
     const [loadingMore, setLoadingMore] = useState(false)
@@ -178,7 +180,8 @@ const ExercisePage: React.FC = () => {
                         {exercises.map((exercise) => (
                             <div
                                 key={exercise._id}
-                                className="bg-card rounded-xl border border-border shadow-sm overflow-hidden hover:shadow-md transition"
+                                className="bg-card rounded-xl border border-border shadow-sm overflow-hidden hover:shadow-md transition cursor-pointer hover:border-primary"
+                                onClick={() => navigate(`/exercise/${exercise.exerciseId}`)}
                             >
                                 <div className="flex gap-3 p-3">
                                     <div className="flex-shrink-0">
