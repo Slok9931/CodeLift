@@ -355,7 +355,13 @@ const DashboardPage: React.FC = () => {
                         <Card
                             key={workout._id}
                             className="hover:shadow-md transition cursor-pointer"
-                            onClick={() => navigate(`/workout/${workout.workoutId}`)}
+                            onClick={() => {
+                                if (!workout.endTime) {
+                                    navigate(`/dashboard?workoutId=${workout.workoutId}`)
+                                } else {
+                                    navigate(`/workout/${workout.workoutId}`)
+                                }
+                            }}
                         >
                             <CardHeader className="pb-3">
                                 <CardTitle className="text-lg flex items-center justify-between">

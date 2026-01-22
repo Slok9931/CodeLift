@@ -281,6 +281,11 @@ const SetPage: React.FC = () => {
         }
     }
 
+    const handleContinue = () => {
+        if (!workoutId) return
+        navigate(`/dashboard?workoutId=${workoutId}`)
+    }
+
     const handleAddDropsetRep = (setId: string, isPrimary: boolean) => {
         const newDropsetRep: DropsetRep = {
             id: `dr${Date.now()}`,
@@ -581,6 +586,13 @@ const SetPage: React.FC = () => {
                         <Plus size={16} className="mr-2" />
                         Add Set
                     </Button>
+                    <Button
+                        onClick={handleContinue}
+                        variant="outline"
+                        className="w-full mt-2"
+                    >
+                        Continue
+                    </Button>
                 </div>
 
                 {setType === 'superset' && secondaryExercise && (
@@ -593,53 +605,55 @@ const SetPage: React.FC = () => {
                             {secondarySets.map((set, index) => (
                                 <div
                                     key={set.id}
-                                    className={`flex items-center gap-2 p-3 rounded-lg border transition-all ${set.saved
+                                    className={`p-3 rounded-lg border transition-all ${set.saved
                                         ? 'bg-success/10 border-success animate-pulse'
                                         : 'bg-background border-border'
                                         }`}
                                 >
                                     <span className="text-sm font-semibold text-muted-foreground w-8">#{index + 1}</span>
-                                    <Input
-                                        type="number"
-                                        placeholder="Weight"
-                                        value={set.weight}
-                                        onChange={e =>
-                                            setSecondarySets(prev =>
-                                                prev.map(s => (s.id === set.id ? { ...s, weight: e.target.value } : s))
-                                            )
-                                        }
-                                        disabled={set.saved}
-                                        className="flex-1 rounded-lg border border-border bg-background text-foreground text-sm focus:border-primary focus:outline-none"
-                                    />
-                                    <Input
-                                        type="number"
-                                        placeholder="Reps"
-                                        value={set.reps}
-                                        onChange={e =>
-                                            setSecondarySets(prev =>
-                                                prev.map(s => (s.id === set.id ? { ...s, reps: e.target.value } : s))
-                                            )
-                                        }
-                                        disabled={set.saved}
-                                        className="flex-1 rounded-lg border border-border bg-background text-foreground text-sm focus:border-primary focus:outline-none"
-                                    />
-                                    {!set.saved && (
-                                        <>
-                                            <Button
-                                                onClick={() => handleRemoveSet(set.id, false)}
-                                                className="p-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition"
-                                            >
-                                                <Minus size={16} />
-                                            </Button>
-                                            <Button
-                                                onClick={() => handleSaveSet(set, false)}
-                                                className="p-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition"
-                                                disabled={!set.weight || !set.reps}
-                                            >
-                                                <Check size={16} />
-                                            </Button>
-                                        </>
-                                    )}
+                                    <div className="flex items-center gap-2 pt-3">
+                                        <Input
+                                            type="number"
+                                            placeholder="Weight"
+                                            value={set.weight}
+                                            onChange={e =>
+                                                setSecondarySets(prev =>
+                                                    prev.map(s => (s.id === set.id ? { ...s, weight: e.target.value } : s))
+                                                )
+                                            }
+                                            disabled={set.saved}
+                                            className="flex-1 rounded-lg border border-border bg-background text-foreground text-sm focus:border-primary focus:outline-none"
+                                        />
+                                        <Input
+                                            type="number"
+                                            placeholder="Reps"
+                                            value={set.reps}
+                                            onChange={e =>
+                                                setSecondarySets(prev =>
+                                                    prev.map(s => (s.id === set.id ? { ...s, reps: e.target.value } : s))
+                                                )
+                                            }
+                                            disabled={set.saved}
+                                            className="flex-1 rounded-lg border border-border bg-background text-foreground text-sm focus:border-primary focus:outline-none"
+                                        />
+                                        {!set.saved && (
+                                            <>
+                                                <Button
+                                                    onClick={() => handleRemoveSet(set.id, false)}
+                                                    className="p-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition"
+                                                >
+                                                    <Minus size={16} />
+                                                </Button>
+                                                <Button
+                                                    onClick={() => handleSaveSet(set, false)}
+                                                    className="p-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition"
+                                                    disabled={!set.weight || !set.reps}
+                                                >
+                                                    <Check size={16} />
+                                                </Button>
+                                            </>
+                                        )}
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -649,6 +663,13 @@ const SetPage: React.FC = () => {
                         >
                             <Plus size={16} className="mr-2" />
                             Add Set
+                        </Button>
+                        <Button
+                            onClick={handleContinue}
+                            variant="outline"
+                            className="w-full mt-2"
+                        >
+                            Continue
                         </Button>
                     </div>
                 )}
