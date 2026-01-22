@@ -10,6 +10,7 @@ import ProfilePage from './components/ProfilePage.tsx'
 import Loading from './components/Loading.tsx'
 import ExercisePage from './components/ExercisePage.tsx'
 import SetPage from './components/SetPage.tsx'
+import WorkoutPage from './components/WorkoutPage.tsx'
 
 const App: React.FC = () => {
   const { user, loading } = useAuth()
@@ -64,6 +65,14 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute user={user}>
                   <SetPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/workout/:workoutId"
+              element={
+                <ProtectedRoute user={user}>
+                  <WorkoutPage />
                 </ProtectedRoute>
               }
             />

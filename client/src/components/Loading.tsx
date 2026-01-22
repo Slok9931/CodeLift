@@ -7,7 +7,7 @@ interface LoadingProps {
 
 const Loading: React.FC<LoadingProps> = ({ message = 'Loading...', fullScreen = false }) => {
   const containerClass = fullScreen
-    ? 'fixed inset-0 flex items-center justify-center bg-background z-50'
+    ? 'fixed inset-0 flex items-center justify-center bg-background z-6'
     : 'flex flex-col items-center justify-center py-20'
 
   return (
