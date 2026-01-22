@@ -32,6 +32,14 @@
         --destructive: 0 84% 45%;
         --destructive-foreground: 0 0% 100%;
 
+        /* Success colors */
+        --success: 120 60% 40%;
+        --success-foreground: 120 100% 95%;
+        
+        /* Warning colors */
+        --warning: 42 100% 50%;
+        --warning-foreground: 42 100% 20%;
+
         /* Border and input */
         --border: 0 0% 20%;
         --input: 0 0% 20%;

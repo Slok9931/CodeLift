@@ -60,7 +60,7 @@ export const getWorkoutById = async (
       res.status(404).json({ error: "Workout not found" });
       return;
     }
-    res.status(200).json(workout);
+    res.status(200).json({workout});
   } catch (error: any) {
     res.status(500).json({
       error: "Failed to fetch workout",
@@ -127,7 +127,7 @@ export const getWorkoutsByUserId = async (
   try {
     const { userId } = req.params;
     const workouts = await Workout.find({ userIds: userId }).sort({ date: -1 });
-    res.status(200).json(workouts);
+    res.status(200).json({workouts});
   } catch (error: any) {
     res.status(500).json({
       error: "Failed to fetch workouts for user",
