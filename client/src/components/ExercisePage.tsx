@@ -112,7 +112,7 @@ const ExercisePage: React.FC = () => {
 
     return (
         <div className="flex flex-col h-full">
-            <div className="sticky top-12 z-5 bg-background border-b border-border flex items-center gap-2 pb-3">
+            <div className="sticky top-12 z-5 bg-background border-b border-border flex items-center gap-2 py-3 -mt-4">
                 <Input
                     type="text"
                     placeholder="Search exercises..."
