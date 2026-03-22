@@ -5,7 +5,7 @@ import type { Exercise } from '../types'
 import Loading from './Loading'
 import { Button } from './ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
-import { ArrowLeft, Dumbbell } from 'lucide-react'
+import { ArrowLeft, Dumbbell, ListChecks, Target } from 'lucide-react'
 import { capitalize } from '../lib/utils'
 
 const ExerciseDetailPage: React.FC = () => {
@@ -15,6 +15,29 @@ const ExerciseDetailPage: React.FC = () => {
   const [exercise, setExercise] = useState<Exercise | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const instructionSteps = React.useMemo(() => {
+    const description = exercise?.description?.trim() || ''
+    if (!description) return []
+
+    if (/Step:\s*\d+/i.test(description)) {
+      return description
+        .split(/Step:\s*\d+\s*/i)
+        .map((step) => step.trim().replace(/\s+/g, ' '))
+        .filter(Boolean)
+    }
+
+    const multiline = description
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+
+    if (multiline.length > 1) {
+      return multiline
+    }
+
+    return []
+  }, [exercise])
 
   useEffect(() => {
     if (exerciseId) {
@@ -71,8 +94,8 @@ const ExerciseDetailPage: React.FC = () => {
 
       <div className="flex-1 overflow-y-auto py-4 space-y-4">
         <Card>
-          <CardContent className="p-0">
-            <div className="w-full aspect-video bg-muted rounded-t-xl overflow-hidden">
+          <CardContent className="p-0 relative">
+            <div className="w-full aspect-video bg-muted rounded-xl overflow-hidden">
               <img
                 src={exercise.photoUrl || './Placeholder_image.jpg'}
                 alt={exercise.title}
@@ -82,19 +105,25 @@ const ExerciseDetailPage: React.FC = () => {
                 }}
               />
             </div>
+            <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/70 to-transparent rounded-b-xl">
+              <div className="text-white text-lg font-semibold line-clamp-2">
+                {capitalize(exercise.title)}
+              </div>
+            </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl flex items-center gap-2">
+            <CardTitle className="text-xl flex items-center gap-2">
               <Dumbbell size={24} className="text-primary" />
-              {exercise.title}
+              Exercise Details
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex gap-2 flex-wrap">
               <span className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold bg-primary/10 text-primary border border-primary/20">
+                <Target size={14} className="mr-1.5" />
                 {capitalize(exercise.primary_muscle)}
               </span>
               <span className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold bg-secondary/50 text-secondary-foreground border border-secondary/20">
@@ -119,10 +148,22 @@ const ExerciseDetailPage: React.FC = () => {
             )}
 
             <div className="pt-4 border-t border-border">
-              <h3 className="text-sm font-semibold text-foreground mb-2">Description</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {exercise.description}
-              </p>
+              <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                <ListChecks size={16} className="text-primary" />
+                Instructions
+              </h3>
+
+              {instructionSteps.length > 0 ? (
+                <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground leading-relaxed">
+                  {instructionSteps.map((step, index) => (
+                    <li key={`${index}-${step.slice(0, 24)}`}>{step}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {exercise.description}
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
