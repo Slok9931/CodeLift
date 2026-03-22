@@ -314,7 +314,7 @@ const DashboardPage: React.FC = () => {
                                                 onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/80?text=No+Image' }}
                                             />
                                             <div className="text-xs font-semibold text-center text-foreground truncate w-full">
-                                                {exercise.title}
+                                                {capitalize(exercise.title)}
                                             </div>
                                         </div>
                                     )

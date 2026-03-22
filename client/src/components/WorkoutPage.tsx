@@ -161,7 +161,7 @@ const WorkoutPage: React.FC = () => {
               return (
                 <Card key={exerciseId}>
                   <CardHeader>
-                    <CardTitle className="text-lg">{exercise.title}</CardTitle>
+                    <CardTitle className="text-lg">{capitalize(exercise.title)}</CardTitle>
                     <div className="text-sm text-muted-foreground">
                       {capitalize(exercise.primary_muscle)} | {capitalize(exercise.equipment)}
                     </div>
