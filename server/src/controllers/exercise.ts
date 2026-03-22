@@ -1,6 +1,22 @@
 import { Request, Response } from "express";
 import Exercise from "../models/Exercise"
 
+const escapeRegex = (value: string): string => {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
+
+const normalizeEquipmentAliases = (equipment: string): string[] => {
+  const normalized = equipment.trim().toLowerCase();
+
+  const aliases: Record<string, string[]> = {
+    bodyweight: ["bodyweight", "body weight", "body-weight"],
+    "resistance band": ["resistance band", "band", "resistance-band"],
+    machine: ["machine", "smith machine", "leverage machine", "cable machine"],
+  };
+
+  return aliases[normalized] || [normalized];
+};
+
 export const addExercise = async (
   req: Request,
   res: Response
@@ -40,23 +56,54 @@ export const getExercises = async (
 ): Promise<void> => {
   try {
     const { search, muscle, equipment, page = "1", limit = "25" } = req.query;
-    const filter: any = {};
+    const andConditions: any[] = [];
 
-    if (search) {
-      filter.$or = [
-        { title: { $regex: search, $options: "i" } },
-        { description: { $regex: search, $options: "i" } },
-      ];
+    if (typeof search === "string" && search.trim()) {
+      const searchRegex = new RegExp(escapeRegex(search.trim()), "i");
+      andConditions.push({
+        $or: [
+          { title: searchRegex },
+          { name: searchRegex },
+          { description: searchRegex },
+          { instructions: searchRegex },
+        ],
+      });
     }
-    if (muscle) {
-      filter.primary_muscle = muscle;
+
+    if (typeof muscle === "string" && muscle.trim()) {
+      const muscleRegex = new RegExp(escapeRegex(muscle.trim()), "i");
+      andConditions.push({
+        $or: [
+          { primary_muscle: muscleRegex },
+          { targetMuscles: muscleRegex },
+          { bodyParts: muscleRegex },
+        ],
+      });
     }
-    if (equipment) {
-      filter.equipment = equipment;
+
+    if (typeof equipment === "string" && equipment.trim()) {
+      const aliases = normalizeEquipmentAliases(equipment);
+      const equipmentRegexes = aliases.map(
+        (alias) => new RegExp(`^${escapeRegex(alias)}$`, "i"),
+      );
+
+      andConditions.push({
+        $or: [
+          { equipment: { $in: equipmentRegexes } },
+          { equipments: { $in: equipmentRegexes } },
+        ],
+      });
     }
-    const exercises = await Exercise.find(filter)
-      .skip((parseInt(page as string) - 1) * parseInt(limit as string))
-      .limit(parseInt(limit as string));
+
+    const query = andConditions.length > 0 ? { $and: andConditions } : {};
+
+    const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
+    const limitNum = Math.max(1, parseInt(limit as string, 10) || 25);
+
+    const exercises = await Exercise.find(query)
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
+
     res.status(200).json({exercises});
   } catch (error: any) {
     res.status(500).json({

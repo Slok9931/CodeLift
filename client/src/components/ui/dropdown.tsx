@@ -21,12 +21,17 @@ const Dropdown: React.FC<DropdownProps> = ({ label, value, onChange, options, er
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const btnRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
   const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({})
 
   useEffect(() => {
     if (!open) return
     const handleClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      const target = e.target as Node
+      const clickedTrigger = !!ref.current?.contains(target)
+      const clickedMenu = !!menuRef.current?.contains(target)
+
+      if (!clickedTrigger && !clickedMenu) {
         setOpen(false)
       }
     }
@@ -71,6 +76,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, value, onChange, options, er
       </button>
       {open && createPortal(
         <div
+          ref={menuRef}
           className={clsx(
             'bg-card border border-border rounded-lg shadow-lg overflow-hidden transition-all duration-200',
             'opacity-100 scale-100 pointer-events-auto'

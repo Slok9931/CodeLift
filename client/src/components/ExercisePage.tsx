@@ -196,7 +196,7 @@ const ExercisePage: React.FC = () => {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <h3 className="font-semibold text-foreground text-sm mb-1 truncate">
-                                            {exercise.title}
+                                            {capitalize(exercise.title)}
                                         </h3>
                                         <div className="flex gap-2 mb-2">
                                             <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-primary/10 text-primary">
