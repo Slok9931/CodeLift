@@ -308,7 +308,7 @@ const DashboardPage: React.FC = () => {
                                             }}
                                         >
                                             <img
-                                                src={'./Placeholder_image.jpg'} // exercise.imageUrl
+                                                src={exercise.photoUrl || './Placeholder_image.jpg'}
                                                 alt={exercise.title}
                                                 className="w-full h-24 object-cover rounded-lg mb-2"
                                                 onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/80?text=No+Image' }}

@@ -186,7 +186,7 @@ const ExercisePage: React.FC = () => {
                                 <div className="flex gap-3 p-3">
                                     <div className="flex-shrink-0">
                                         <img
-                                            src={'./Placeholder_image.jpg'} // exercise.imageUrl
+                                            src={exercise.photoUrl || './Placeholder_image.jpg'}
                                             alt={exercise.title}
                                             className="w-20 h-20 rounded-lg object-cover"
                                             onError={(e) => {

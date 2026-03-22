@@ -1,6 +1,49 @@
 import config, { apiClient } from "../config/api";
 import type { Exercise } from "../types";
 
+type RawExercise = Partial<Exercise> & {
+  name?: string;
+  gifUrl?: string;
+  targetMuscles?: string[];
+  secondaryMuscles?: string[];
+  equipments?: string[];
+  bodyParts?: string[];
+  instructions?: string[];
+};
+
+const normalizeExercise = (raw: RawExercise): Exercise => {
+  const title = raw.title || raw.name || "Untitled exercise";
+  const description =
+    raw.description ||
+    (Array.isArray(raw.instructions) && raw.instructions.length > 0
+      ? raw.instructions.join("\n")
+      : "");
+
+  const primaryMuscle =
+    raw.primary_muscle || raw.targetMuscles?.[0] || raw.bodyParts?.[0] || "";
+
+  const secondaryMuscles =
+    raw.secondary_muscles?.length
+      ? raw.secondary_muscles
+      : raw.secondaryMuscles || [];
+
+  const equipment =
+    raw.equipment || raw.equipments?.[0] || "";
+
+  return {
+    _id: raw._id || raw.exerciseId || title,
+    exerciseId: raw.exerciseId || raw._id || title,
+    title,
+    description,
+    primary_muscle: primaryMuscle,
+    secondary_muscles: secondaryMuscles,
+    equipment,
+    photoUrl: raw.photoUrl || raw.gifUrl || "",
+    createdAt: raw.createdAt || new Date().toISOString(),
+    updatedAt: raw.updatedAt || new Date().toISOString(),
+  };
+};
+
 class ExerciseService {
   static async getAllExercises(params?: {
     search?: string;
@@ -10,14 +53,28 @@ class ExerciseService {
     limit?: number;
   }): Promise<{ exercises: Exercise[] }> {
     const response = await apiClient.get(config.API_ENDPOINTS.EXERCISE.BASE, { params });
-    return response.data;
+    const payload = response.data?.data ?? response.data;
+    const rawExercises = Array.isArray(payload)
+      ? payload
+      : Array.isArray(payload?.exercises)
+        ? payload.exercises
+        : [];
+
+    return {
+      exercises: rawExercises.map((exercise: RawExercise) => normalizeExercise(exercise)),
+    };
   }
 
   static async getExerciseById(id: string): Promise<{ exercise: Exercise }> {
     const response = await apiClient.get(
       `${config.API_ENDPOINTS.EXERCISE.BASE}/${id}`,
     );
-    return response.data;
+    const payload = response.data?.data ?? response.data;
+    const rawExercise = payload?.exercise ?? payload;
+
+    return {
+      exercise: normalizeExercise(rawExercise as RawExercise),
+    };
   }
 
   static async addExercise(data: {
@@ -53,7 +110,9 @@ class ExerciseService {
       config.API_ENDPOINTS.EXERCISE.BASE,
       data,
     );
-    return response.data;
+    const payload = response.data?.data ?? response.data;
+    const rawExercise = payload?.exercise ?? payload;
+    return { exercise: normalizeExercise(rawExercise as RawExercise) };
   }
 
   static async updateExercise(
@@ -92,7 +151,9 @@ class ExerciseService {
       `${config.API_ENDPOINTS.EXERCISE.BASE}/${id}`,
       data,
     );
-    return response.data;
+    const payload = response.data?.data ?? response.data;
+    const rawExercise = payload?.exercise ?? payload;
+    return { exercise: normalizeExercise(rawExercise as RawExercise) };
   }
 
   static async deleteExercise(id: string): Promise<{ message: string }> {

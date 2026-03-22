@@ -17,33 +17,12 @@ export interface Exercise {
   exerciseId: string;
   title: string;
   description: string;
-  primary_muscle:
-    | "biceps"
-    | "triceps"
-    | "chest"
-    | "back"
-    | "legs"
-    | "shoulders"
-    | "core";
-  secondary_muscles: (
-    | "biceps"
-    | "triceps"
-    | "chest"
-    | "back"
-    | "legs"
-    | "shoulders"
-    | "core"
-  )[];
-  equipment:
-    | "dumbbell"
-    | "barbell"
-    | "bodyweight"
-    | "machine"
-    | "kettlebell"
-    | "resistance band";
+  primary_muscle: string;
+  secondary_muscles: string[];
+  equipment: string;
   photoUrl: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }
 
 export interface Workout {

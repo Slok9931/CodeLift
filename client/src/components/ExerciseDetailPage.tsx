@@ -74,7 +74,7 @@ const ExerciseDetailPage: React.FC = () => {
           <CardContent className="p-0">
             <div className="w-full aspect-video bg-muted rounded-t-xl overflow-hidden">
               <img
-                src={'./Placeholder_image.jpg'} // exercise.photoUrl
+                src={exercise.photoUrl || './Placeholder_image.jpg'}
                 alt={exercise.title}
                 className="w-full h-full object-cover"
                 onError={(e) => {
