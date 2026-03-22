@@ -12,6 +12,7 @@ import ExercisePage from './components/ExercisePage.tsx'
 import SetPage from './components/SetPage.tsx'
 import WorkoutPage from './components/WorkoutPage.tsx'
 import ExerciseDetailPage from './components/ExerciseDetailPage.tsx'
+import AnalyticsPage from './components/AnalyticsPage.tsx'
 
 const App: React.FC = () => {
   const { user, loading } = useAuth()
@@ -49,7 +50,7 @@ const App: React.FC = () => {
               path="/analytics"
               element={
                 <ProtectedRoute user={user}>
-                  <DashboardPage />
+                  <AnalyticsPage />
                 </ProtectedRoute>
               }
             />
