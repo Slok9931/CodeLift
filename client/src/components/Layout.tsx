@@ -13,55 +13,70 @@ const pages = [
 const Layout: React.FC<{ user: User | null }> = ({ user }) => {
     const location = useLocation()
     const navigate = useNavigate()
+
+    const currentPage =
+        pages.find(({ path }) => location.pathname.startsWith(path))?.page || 'CodeLift'
+
     return (
-        <div className="h-[100vh] max-w-md w-full mx-auto flex flex-col border overflow-auto">
-            <nav className="min-h-12 border-b flex items-center justify-between rounded-b-2xl px-4 py-3 bg-card shadow-lg sticky top-0 z-10">
-                <h1 className="text-2xl flex items-center gap-2 font-bold text-center">
-                    <span className='text-primary'><NotebookTabs /></span>
-                    <div>
-                        <span>Code</span>
-                        <span className="text-primary">Lift</span>
+        <div className="app-shell-wrap">
+            <div className="app-shell flex flex-col overflow-auto">
+                <nav className="sticky top-0 z-10 border-b border-border/80 px-5 py-4 bg-card/95 backdrop-blur">
+                    <div className="flex items-center justify-between gap-3">
+                        <h1 className="text-xl flex items-center gap-2 font-semibold tracking-tight">
+                            <span className="text-primary">
+                                <NotebookTabs size={21} />
+                            </span>
+                            <span>
+                                Code<span className="text-primary">Lift</span>
+                            </span>
+                        </h1>
+                        <span className="text-xs px-2.5 py-1 rounded-full border border-border bg-muted/60 text-muted-foreground font-medium">
+                            {currentPage}
+                        </span>
                     </div>
-                </h1>
-                <div>
-                    {pages.map(({ name, path, page }) => {
-                        if (location.pathname === path) {
-                            return <span key={name} className="text-md font-medium">{page}</span>
-                        }
-                        return null
-                    })}
-                </div>
-            </nav>
-            <main className="flex-grow my-8 mx-8">
-                <Outlet />
-            </main>
-            {user && (
-                <footer className="min-h-20 border-t flex items-center justify-between rounded-t-2xl py-3 text-center bottom-0 w-full sticky z-10 bg-card shadow-lg">
-                    {pages.map(({ name, icon: Icon, path }) => {
-                        const isActive = location.pathname === path
-                        const isProfile = name === 'Profile'
-                        return (
-                            <button
-                                key={name}
-                                onClick={() => navigate(path)}
-                                className={`flex flex-col items-center flex-1 py-1 px-2 rounded-xl transition-colors ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted/40'}`}
-                                style={{ outline: 'none', border: 'none', background: 'none' }}
-                            >
-                                {isProfile && user?.profilePicture ? (
-                                    <img
-                                        src={user.profilePicture}
-                                        alt="Profile"
-                                        className={`h-7 w-7 rounded-full object-cover border-2 ${isActive ? 'border-primary' : 'border-muted'}`}
-                                    />
-                                ) : (
-                                    <Icon size={24} strokeWidth={2.2} className={isActive ? 'text-primary' : ''} />
-                                )}
-                                <span className={`text-xs mt-1 font-medium ${isActive ? 'text-primary' : ''}`}>{name}</span>
-                            </button>
-                        )
-                    })}
-                </footer>
-            )}
+                </nav>
+
+                <main className="flex-1 overflow-y-auto px-5">
+                    <Outlet />
+                </main>
+
+                {user && (
+                    <footer className="z-10 border-t border-border/80 bg-card/95 backdrop-blur px-2 py-2 shrink-0">
+                        <div className="flex items-center justify-between gap-1">
+                            {pages.map(({ name, icon: Icon, path }) => {
+                                const isActive = location.pathname.startsWith(path)
+                                const isProfile = name === 'Profile'
+
+                                return (
+                                    <button
+                                        key={name}
+                                        onClick={() => navigate(path)}
+                                        className={`flex flex-col items-center flex-1 py-1.5 px-2 rounded-xl border transition-colors ${
+                                            isActive
+                                                ? 'bg-primary/12 border-primary/40 text-primary'
+                                                : 'border-transparent text-muted-foreground hover:bg-muted/50'
+                                        }`}
+                                        type="button"
+                                    >
+                                        {isProfile && user?.profilePicture ? (
+                                            <img
+                                                src={user.profilePicture}
+                                                alt="Profile"
+                                                className={`h-7 w-7 rounded-full object-cover border-2 ${
+                                                    isActive ? 'border-primary' : 'border-muted'
+                                                }`}
+                                            />
+                                        ) : (
+                                            <Icon size={20} strokeWidth={2.1} className={isActive ? 'text-primary' : ''} />
+                                        )}
+                                        <span className={`text-[11px] mt-1 font-medium ${isActive ? 'text-primary' : ''}`}>{name}</span>
+                                    </button>
+                                )
+                            })}
+                        </div>
+                    </footer>
+                )}
+            </div>
         </div>
     )
 }

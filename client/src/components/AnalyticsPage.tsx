@@ -270,7 +270,7 @@ const AnalyticsPage: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-full gap-4 pb-4">
+    <div className="flex flex-col h-full gap-4 py-4">
       <Card className="bg-gradient-to-br from-primary/20 via-card to-card border-primary/40">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">

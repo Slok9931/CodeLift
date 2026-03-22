@@ -4,49 +4,40 @@
 
 @layer base {
     :root {
-        /* Background colors */
-        --background: 0 0% 0%;
-        --foreground: 0 0% 98%;
+        /* Core surfaces */
+        --background: 220 18% 8%;
+        --foreground: 220 18% 96%;
 
-        /* Card colors */
-        --card: 0 0% 10%;
-        --card-foreground: 0 0% 98%;
+        --card: 220 16% 11%;
+        --card-foreground: 220 18% 96%;
 
-        /* Primary colors (Red theme) */
-        --primary: 0 72% 51%;
+        /* Primary accent */
+        --primary: 6 78% 56%;
         --primary-foreground: 0 0% 100%;
 
-        /* Secondary colors */
-        --secondary: 0 0% 15%;
-        --secondary-foreground: 0 0% 98%;
+        --secondary: 220 13% 17%;
+        --secondary-foreground: 220 17% 92%;
 
-        /* Muted colors */
-        --muted: 0 0% 15%;
-        --muted-foreground: 0 0% 64%;
+        --muted: 220 12% 16%;
+        --muted-foreground: 220 10% 68%;
 
-        /* Accent colors (Lighter red) */
-        --accent: 0 72% 51%;
+        --accent: 6 78% 56%;
         --accent-foreground: 0 0% 100%;
 
-        /* Destructive colors (Darker red) */
-        --destructive: 0 84% 45%;
+        --destructive: 0 84% 52%;
         --destructive-foreground: 0 0% 100%;
 
-        /* Success colors */
-        --success: 120 60% 40%;
-        --success-foreground: 120 100% 95%;
-        
-        /* Warning colors */
-        --warning: 42 100% 50%;
-        --warning-foreground: 42 100% 20%;
+        --success: 138 53% 44%;
+        --success-foreground: 138 100% 96%;
 
-        /* Border and input */
-        --border: 0 0% 20%;
-        --input: 0 0% 20%;
-        --ring: 0 72% 51%;
+        --warning: 38 96% 56%;
+        --warning-foreground: 38 90% 18%;
 
-        /* Radius */
-        --radius: 0.5rem;
+        --border: 220 12% 24%;
+        --input: 220 12% 24%;
+        --ring: 6 78% 56%;
+
+        --radius: 0.85rem;
     }
 
     * {
@@ -55,7 +46,21 @@
 
     body {
         @apply bg-background text-foreground;
+        min-height: 100vh;
+        font-family: "Outfit", "Avenir Next", "Segoe UI", sans-serif;
         font-feature-settings: "rlig" 1, "calt" 1;
+        background-image: radial-gradient(hsl(var(--border) / 0.35) 0.6px, transparent 0.6px);
+        background-size: 18px 18px;
+    }
+}
+
+@layer components {
+    .app-shell-wrap {
+        @apply min-h-screen flex items-center justify-center px-0 sm:px-4;
+    }
+
+    .app-shell {
+        @apply w-full max-w-[430px] h-[100dvh] bg-background border-x border-border shadow-none overflow-hidden sm:h-[calc(100vh-2rem)] sm:my-4 sm:rounded-[28px] sm:border sm:shadow-2xl;
     }
 }
 

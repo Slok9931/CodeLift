@@ -212,7 +212,7 @@ const DashboardPage: React.FC = () => {
 
     return (
         <div className="flex flex-col h-full">
-            <div className="sticky top-12 z-10 bg-background border-b border-border py-4 -mt-4">
+            <div className="sticky top-2 z-10 bg-background border-b py-4">
                 {activeWorkout && !activeWorkout.endTime ? (
                     <div className="flex items-center justify-between">
                         <div className="flex items-center justify-center gap-2 text-primary">

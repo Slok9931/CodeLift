@@ -114,7 +114,7 @@ const ExercisePage: React.FC = () => {
 
     return (
         <div className="flex flex-col h-full">
-            <div className="sticky top-12 z-5 bg-background border-b border-border flex items-center gap-2 py-3 -mt-4">
+            <div className="sticky top-2 z-5 bg-background border-b border-border flex items-center gap-2 py-4">
                 <Input
                     type="text"
                     placeholder="Search exercises..."
@@ -133,7 +133,7 @@ const ExercisePage: React.FC = () => {
             <div
                 className={
                     'z-5 top-24 sticky bg-card border-b border-border px-4 overflow-hidden space-y-3 rounded-b-xl transition-all duration-500' +
-                    (showFilters ? ' max-h-[400px] py-4 opacity-100' : ' max-h-0 py-0 opacity-0 pointer-events-none')
+                    (showFilters ? ' max-h-[400px] py-4 opacity-100 mb-2' : ' max-h-0 py-0 opacity-0 pointer-events-none')
                 }
                 style={{ willChange: 'max-height, opacity, padding' }}
             >

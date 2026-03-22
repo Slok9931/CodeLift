@@ -18,7 +18,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       <select
         ref={ref}
         className={clsx(
-          'w-full px-3 py-2 rounded-lg bg-background border border-border text-foreground focus:border-primary focus:outline-none transition text-sm',
+          'w-full px-3 py-2.5 rounded-xl bg-card border border-border text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition text-sm',
           error && 'border-destructive',
           className
         )}
