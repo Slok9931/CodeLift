@@ -89,7 +89,7 @@ const ProfilePage: React.FC = () => {
     }
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center py-4">
             <div className="w-full flex flex-col items-center">
                 <div className="relative">
                     <img

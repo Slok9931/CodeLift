@@ -383,7 +383,7 @@ const SetPage: React.FC = () => {
 
     return (
         <div className="flex flex-col h-full">
-            <div className="sticky top-12 z-10 bg-background border-b border-border pb-4 -mt-4">
+            <div className="sticky top-2 z-10 bg-background border-b border-border pb-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center justify-center gap-2 text-primary">
                         <Clock size={12} />
@@ -406,14 +406,14 @@ const SetPage: React.FC = () => {
                     <div className="text-xs text-muted-foreground">{capitalize(setType)}</div>
                 </div>
                 <div className="text-xs text-muted-foreground">
-                    {primaryExercise.title}
+                    {capitalize(primaryExercise.title)}
                     {secondaryExercise && ` + ${secondaryExercise.title}`}
                 </div>
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-4">
                 <div className="bg-card border border-border rounded-xl p-4">
-                    <h3 className="text-base font-semibold text-foreground">{primaryExercise.title}</h3>
+                    <h3 className="text-base font-semibold text-foreground">{capitalize(primaryExercise.title)}</h3>
                     <div className="flex items-center justify-start text-xs text-muted-foreground mb-4">
                         {capitalize(primaryExercise.primary_muscle)} | {capitalize(primaryExercise.equipment)}
                     </div>

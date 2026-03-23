@@ -83,9 +83,10 @@ const DashboardPage: React.FC = () => {
         }
     }, [exercisePage])
 
-    const fetchExercises = async (pageNum: number, reset = false) => {
+    const fetchExercises = async (pageNum: number, reset = false, searchTerm?: string) => {
         setExerciseLoading(true)
         try {
+            const effectiveSearch = typeof searchTerm === 'string' ? searchTerm : exerciseSearch
             const params: {
                 search?: string
                 muscle?: string
@@ -93,7 +94,7 @@ const DashboardPage: React.FC = () => {
                 limit?: number
             } = {
                 ...(selectedMuscle ? { muscle: selectedMuscle } : {}),
-                ...(exerciseSearch ? { search: exerciseSearch } : {}),
+                ...(effectiveSearch ? { search: effectiveSearch } : {}),
                 page: pageNum,
                 limit: 25,
             }
@@ -212,7 +213,7 @@ const DashboardPage: React.FC = () => {
 
     return (
         <div className="flex flex-col h-full">
-            <div className="sticky top-2 z-10 bg-background border-b py-4">
+            <div className="sticky top-0 z-10 bg-background border-b py-4">
                 {activeWorkout && !activeWorkout.endTime ? (
                     <div className="flex items-center justify-between">
                         <div className="flex items-center justify-center gap-2 text-primary">
@@ -273,65 +274,73 @@ const DashboardPage: React.FC = () => {
                     )}
 
                     {selectedSetType && selectedMuscle && (
-                        <div className="flex flex-col items-center justify-center pb-6 gap-6 w-full">
-                            <div className="w-full max-w-xl mx-auto mb-4 sticky top-[7.55rem] z-5">
+                        <div className="flex flex-col items-center justify-center pb-2 gap-4 w-full">
+                            <div className="w-full max-w-3xl mx-auto">
                                 <Input
                                     type="text"
                                     value={exerciseSearch}
-                                    onChange={e => { setExerciseSearch(e.target.value); setExercisePage(1); fetchExercises(1, true) }}
+                                    onChange={e => {
+                                        const nextSearch = e.target.value
+                                        setExerciseSearch(nextSearch)
+                                        setExercisePage(1)
+                                        fetchExercises(1, true, nextSearch)
+                                    }}
                                     placeholder={`Search ${capitalize(selectedMuscle)} exercises...`}
                                     className="w-full px-4 py-2 rounded-xl border border-border bg-card text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none transition"
                                 />
                             </div>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 w-full max-w-3xl mx-auto">
-                                {exerciseList.map((exercise) => {
-                                    const isSelected =
-                                        (primaryExercise && primaryExercise._id === exercise._id) ||
-                                        (selectedSetType === 'superset' && secondaryExercise && secondaryExercise._id === exercise._id)
-                                    return (
-                                        <div
-                                            key={exercise._id}
-                                            className={`bg-card border border-border rounded-xl shadow-sm flex flex-col items-center justify-center p-2 cursor-pointer transition hover:shadow-md ${isSelected ? 'ring-2 ring-primary' : ''}`}
-                                            onClick={() => {
-                                                if (selectedSetType === 'superset') {
-                                                    if (!primaryExercise) {
+                            <div className="w-full max-w-3xl mx-auto max-h-[58vh] overflow-y-auto pr-1">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 w-full">
+                                    {exerciseList.map((exercise) => {
+                                        const isSelected =
+                                            (primaryExercise && primaryExercise._id === exercise._id) ||
+                                            (selectedSetType === 'superset' && secondaryExercise && secondaryExercise._id === exercise._id)
+                                        return (
+                                            <div
+                                                key={exercise._id}
+                                                className={`bg-card border border-border rounded-xl shadow-sm flex flex-col items-center justify-center p-2 cursor-pointer transition hover:shadow-md ${isSelected ? 'ring-2 ring-primary' : ''}`}
+                                                onClick={() => {
+                                                    if (selectedSetType === 'superset') {
+                                                        if (!primaryExercise) {
+                                                            setPrimaryExercise(exercise)
+                                                            setSearchParams({ workoutId: activeWorkoutId!, muscle: selectedMuscle, setType: selectedSetType, primary_exercise: exercise.exerciseId })
+                                                        } else if (!secondaryExercise && exercise._id !== primaryExercise._id) {
+                                                            setSecondaryExercise(exercise)
+                                                            navigate(`/sets?workoutId=${activeWorkoutId}&muscle=${selectedMuscle}&setType=${selectedSetType}&primary_exercise=${primaryExercise.exerciseId}&secondary_exercise=${exercise.exerciseId}`)
+                                                        }
+                                                    } else {
                                                         setPrimaryExercise(exercise)
-                                                        setSearchParams({ workoutId: activeWorkoutId!, muscle: selectedMuscle, setType: selectedSetType, primary_exercise: exercise.exerciseId })
-                                                    } else if (!secondaryExercise && exercise._id !== primaryExercise._id) {
-                                                        setSecondaryExercise(exercise)
-                                                        navigate(`/sets?workoutId=${activeWorkoutId}&muscle=${selectedMuscle}&setType=${selectedSetType}&primary_exercise=${primaryExercise.exerciseId}&secondary_exercise=${exercise.exerciseId}`)
+                                                        navigate(`/sets?workoutId=${activeWorkoutId}&muscle=${selectedMuscle}&setType=${selectedSetType}&primary_exercise=${exercise.exerciseId}`)
                                                     }
-                                                } else {
-                                                    setPrimaryExercise(exercise)
-                                                    navigate(`/sets?workoutId=${activeWorkoutId}&muscle=${selectedMuscle}&setType=${selectedSetType}&primary_exercise=${exercise.exerciseId}`)
-                                                }
-                                            }}
-                                        >
-                                            <img
-                                                src={exercise.photoUrl || './Placeholder_image.jpg'}
-                                                alt={exercise.title}
-                                                className="w-full h-24 object-cover rounded-lg mb-2"
-                                                onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/80?text=No+Image' }}
-                                            />
-                                            <div className="text-xs font-semibold text-center text-foreground truncate w-full">
-                                                {capitalize(exercise.title)}
+                                                }}
+                                            >
+                                                <img
+                                                    src={exercise.photoUrl || './Placeholder_image.jpg'}
+                                                    alt={exercise.title}
+                                                    className="w-full h-24 object-cover rounded-lg mb-2"
+                                                    onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/80?text=No+Image' }}
+                                                />
+                                                <div className="text-xs font-semibold text-center text-foreground truncate w-full">
+                                                    {capitalize(exercise.title)}
+                                                </div>
                                             </div>
-                                        </div>
-                                    )
-                                })}
+                                        )
+                                    })}
+                                </div>
+
+                                {exerciseLoading && (
+                                    <div className="flex justify-center py-4">
+                                        <Loading message="Loading exercises..." />
+                                    </div>
+                                )}
+                                {exerciseHasMore && !exerciseLoading && (
+                                    <div className="flex justify-center py-4">
+                                        <Button onClick={() => setExercisePage(p => p + 1)}>
+                                            Load More
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
-                            {exerciseLoading && (
-                                <div className="flex justify-center py-4">
-                                    <Loading message="Loading exercises..." />
-                                </div>
-                            )}
-                            {exerciseHasMore && !exerciseLoading && (
-                                <div className="flex justify-center py-4">
-                                    <Button onClick={() => setExercisePage(p => p + 1)}>
-                                        Load More
-                                    </Button>
-                                </div>
-                            )}
                         </div>
                     )}
                 </div>

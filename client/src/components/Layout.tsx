@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import type { User } from '../types'
-import { Dumbbell, BarChart2, User as UserIcon, HeartPulse, NotebookTabs } from 'lucide-react'
+import { Dumbbell, BarChart2, User as UserIcon, HeartPulse, NotebookTabs, Flame } from 'lucide-react'
+import WorkoutService from '../services/workout'
 
 const pages = [
     { name: 'Workout', icon: HeartPulse, path: '/dashboard', page: 'My Workouts' },
@@ -10,12 +11,69 @@ const pages = [
     { name: 'Profile', icon: UserIcon, path: '/profile', page: 'My Profile' },
 ]
 
+const getDayKey = (date: Date): string => {
+    const normalized = new Date(date)
+    normalized.setHours(0, 0, 0, 0)
+    return normalized.toISOString().slice(0, 10)
+}
+
+const calculateCurrentStreak = (dates: Date[]): number => {
+    if (dates.length === 0) return 0
+
+    const trainedDays = new Set(dates.map((date) => getDayKey(new Date(date))))
+    const today = new Date()
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+
+    let cursor = new Date(today)
+
+    // If user skipped today but trained yesterday, keep streak active.
+    if (!trainedDays.has(getDayKey(today)) && trainedDays.has(getDayKey(yesterday))) {
+        cursor = yesterday
+    }
+
+    if (!trainedDays.has(getDayKey(cursor))) {
+        return 0
+    }
+
+    let streak = 0
+    while (trainedDays.has(getDayKey(cursor))) {
+        streak += 1
+        cursor.setDate(cursor.getDate() - 1)
+    }
+
+    return streak
+}
+
 const Layout: React.FC<{ user: User | null }> = ({ user }) => {
     const location = useLocation()
     const navigate = useNavigate()
+    const [streakDays, setStreakDays] = useState(0)
 
     const currentPage =
         pages.find(({ path }) => location.pathname.startsWith(path))?.page || 'CodeLift'
+
+    useEffect(() => {
+        const loadStreak = async () => {
+            if (!user?._id) {
+                setStreakDays(0)
+                return
+            }
+
+            try {
+                const response = await WorkoutService.getWorkoutsByUserId(user._id)
+                const completedWorkoutDates = (response.workouts || [])
+                    .filter((workout) => !!workout.endTime)
+                    .map((workout) => new Date(workout.date))
+
+                setStreakDays(calculateCurrentStreak(completedWorkoutDates))
+            } catch {
+                setStreakDays(0)
+            }
+        }
+
+        void loadStreak()
+    }, [user?._id])
 
     return (
         <div className="app-shell-wrap">
@@ -30,9 +88,17 @@ const Layout: React.FC<{ user: User | null }> = ({ user }) => {
                                 Code<span className="text-primary">Lift</span>
                             </span>
                         </h1>
-                        <span className="text-xs px-2.5 py-1 rounded-full border border-border bg-muted/60 text-muted-foreground font-medium">
-                            {currentPage}
-                        </span>
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs px-2.5 py-1 rounded-full border border-border bg-muted/60 text-muted-foreground font-medium">
+                                {currentPage}
+                            </span>
+                            {user && (
+                                <span className="text-xs px-2.5 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary font-semibold inline-flex items-center gap-1">
+                                    <Flame size={12} />
+                                    {streakDays}d
+                                </span>
+                            )}
+                        </div>
                     </div>
                 </nav>
 

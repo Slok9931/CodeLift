@@ -81,7 +81,7 @@ const ExerciseDetailPage: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="sticky top-12 z-10 bg-background border-b border-border py-4 -mt-4">
+      <div className="sticky top-0 z-10 bg-background border-b border-border py-4 -mt-4">
         <Button
           onClick={() => navigate('/exercise')}
           variant="outline"
