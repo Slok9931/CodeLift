@@ -18,7 +18,7 @@ const Layout: React.FC<{ user: User | null }> = ({ user }) => {
         pages.find(({ path }) => location.pathname.startsWith(path))?.page || 'CodeLift'
 
     return (
-        <div className="app-shell-wrap -mt-4">
+        <div className="app-shell-wrap">
             <div className="app-shell flex flex-col overflow-auto">
                 <nav className="sticky top-0 z-10 border-b border-border/80 px-5 py-4 bg-card/95 backdrop-blur">
                     <div className="flex items-center justify-between gap-3">
